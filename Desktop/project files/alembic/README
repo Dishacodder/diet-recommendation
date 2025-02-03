@@ -1,1 +1,6 @@
 Generic single-database configuration.
+using postgresql for database.
+create three models usres , food_items , diet_plans
+add authentication
+using alembic package for data migration
+for API using fastAPI
