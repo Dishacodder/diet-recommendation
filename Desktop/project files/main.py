@@ -88,7 +88,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     # Create JWT token if credentials are valid
-    access_token = create_access_token(data={"sub": db_user.username})
+    access_token = create_access_token(data={"sub": db_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
 # Protected route to show user data
@@ -103,27 +103,6 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
     
     db_user = db.query(User).filter(User.username == username).first()
     return db_user
-
-@app.post("/add_user/")
-def add_user(user: UserCreate, db: Session = Depends(get_db)):
-    hashed_password = hash_password(user.password)  # Fixing plain-text password issue
-    db_user = User(
-        name=user.name,
-        email=user.email,
-        password=hashed_password,
-        age=user.age,
-        weight=user.weight,
-        height=user.height,
-        activity_level=user.activity_level,
-        goal=user.goal,
-        dietary_preferences=user.dietary_preference
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return {"message": "User added successfully", "user_id": db_user.id}
-
-
 
 
 # Add a protected route
